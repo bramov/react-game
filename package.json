@@ -1,0 +1,24 @@
+{
+  "name": "game-react",
+  "version": "1.0.0",
+  "description": "project for RS School React course",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bramov/react-game.git"
+  },
+  "keywords": [
+    "react",
+    "game",
+    "memory"
+  ],
+  "author": "Aleksei Abramov <alexey.abramov96@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bramov/react-game/issues"
+  },
+  "homepage": "https://github.com/bramov/react-game#readme"
+}
