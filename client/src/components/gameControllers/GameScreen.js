@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Settings from "./Settings";
 import Card from "./Card";
+import {generateData, getData} from "../../utils";
 
 const GameScreen = () => {
   const [current, setCurrent] = useState(null);
@@ -9,89 +10,17 @@ const GameScreen = () => {
   const [active, setActive] = useState([]);
 
   useEffect(() => {
-    checkIfCardsSame();
-
-  }, [current, previous]);
-
-  useEffect(() => {
-    const shouldBe = [
-      {
-        code: '10C',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: '10H',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: 'AS',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: 'KC',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: 'QH',
-        id: null,
-        open: false,
-        active: true
-      }
-    ]
-    let test = [...shouldBe, ...shouldBe];
-    const shuffleArray = (arr) => arr.sort(() => Math.round(Math.random() * 100) - 50);
-    test = test.map((el, i) => ({...el, id: i}))
-    const testArray = shuffleArray(test);
-    setCards(testArray);
-
+    playAgain();
   }, []);
 
+  useEffect(() => {
+    checkIfCardsSame();
+  }, [current, previous]);
+
   const playAgain = () => {
-    const shouldBe = [
-      {
-        code: '10C',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: '10H',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: 'AS',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: 'KC',
-        id: null,
-        open: false,
-        active: true
-      },
-      {
-        code: 'QH',
-        id: null,
-        open: false,
-        active: true
-      }
-    ]
-    let test = [...shouldBe, ...shouldBe];
-    const shuffleArray = (arr) => arr.sort(() => Math.round(Math.random() * 100) - 50);
-    test = test.map((el, i) => ({...el, id: i}))
-    const testArray = shuffleArray(test);
-    setCards(testArray);
+    getData('/loadData')
+      .then(body => generateData(body))
+      .then(data => setCards(data))
   }
 
   const checkIfCardsSame = () => {
@@ -151,10 +80,10 @@ const GameScreen = () => {
       <div className="game-area container">
           <div className="row cards-wrapper">
 
-            { cards.map(el => <Card
+            { cards ? cards.map(el => <Card
                   {...el}
                   clickHandler={() => openCard(el)}
-            />) }
+            />) : null }
 
           </div>
       </div>
