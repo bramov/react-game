@@ -72,7 +72,8 @@ code {
 .card-placer {
   background-color: transparent;
   perspective: 1000px;
-  width: 50px;
+  width: 100px;
+  height: 152.8px;
 }
 
 .card-front {
@@ -99,4 +100,9 @@ code {
 
 .card-outer {
   transform: rotateY(180deg);
+}
+
+.cards-wrapper > ul > li {
+  display: inline-block;
+  margin: 5%;
 }
