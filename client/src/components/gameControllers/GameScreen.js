@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Settings from "./Settings";
 import Card from "./Card";
 import {generateData, getData} from "../../utils";
+import ModalFinished from "./ModalFinished";
 
 const GameScreen = () => {
   const [current, setCurrent] = useState(null);
   const [previous, setPrevious] = useState(null);
   const [cards, setCards] = useState([]);
-  const [active, setActive] = useState([]);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
 
   useEffect(() => {
     playAgain();
@@ -18,12 +20,22 @@ const GameScreen = () => {
   }, [current, previous]);
 
   const playAgain = () => {
+    setScore(0);
+    setFinished(false);
     getData('/loadData')
       .then(body => generateData(body))
       .then(data => setCards(data))
   }
 
+  const checkIfGameEnded = () => {
+    const allCardsOpen = cards.every(el => el.open);
+    if (allCardsOpen) {
+      setFinished(true);
+    }
+  }
+
   const checkIfCardsSame = () => {
+
     if (current && previous) {
       if (current.code === previous.code) {
         setCurrent(null);
@@ -33,13 +45,15 @@ const GameScreen = () => {
             card.id === current.id ?
             ({...card, active: false}) : card
           )
+        setCards(updatedCards);
+        checkIfGameEnded();
+        /*
         setTimeout(() => {
-          setCards(updatedCards);
-        }, 500);
+
+        }, 500);*/
       } else {
         closeTwoCards();
       }
-      console.log(cards);
     }
 
   }
@@ -61,6 +75,7 @@ const GameScreen = () => {
   }
   const openCard = (clickedCard) => {
     if (!clickedCard.open) {
+      setScore(score + 1);
       if (current) {
         setPrevious(current);
       }
@@ -78,6 +93,7 @@ const GameScreen = () => {
   return (
     <>
       <div className="game-area container">
+        <h3 className="teal-text center">Clicks: <strong className="black-text">{score}</strong></h3>
           <div className="row cards-wrapper">
 
             { cards ? cards.map(el => <Card
@@ -90,6 +106,8 @@ const GameScreen = () => {
       <div className="settings-area">
         <Settings restartFunc={playAgain}/>
       </div>
+
+      { finished ? <ModalFinished playAgain={playAgain} score={score}/> : null}
     </>
   )
 }

@@ -3,12 +3,13 @@ import GameScreen from "./gameControllers/GameScreen";
 import ActionButton from "./gameControllers/ActionButton";
 import sound from "../audio/music.mp3";
 
-const GameArea = () => {
-  const [isActive, setActive] = useState(false);
-  /*
-  const [musicPlaying, setMusicPlaying] = useState(false);
 
-   */
+const GameArea = () => {
+  const [data, setData] = useState(null);
+  const [isActive, setActive] = useState(false);
+
+
+
   useEffect(() => {
     startMusic();
   })
