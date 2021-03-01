@@ -6,8 +6,7 @@ import sound from "../audio/music.mp3";
 
 const GameArea = () => {
   const [data, setData] = useState(null);
-  const [isActive, setActive] = useState(false);
-
+  const [isActive, setActive] = useState(Boolean(localStorage.getItem('active')) || false);
 
 
   useEffect(() => {
@@ -21,7 +20,8 @@ const GameArea = () => {
   }
 
   const startGame = () => {
-    setActive('classic');
+    setActive(true);
+    localStorage.setItem('active', 'true');
   }
   return (
     <main>

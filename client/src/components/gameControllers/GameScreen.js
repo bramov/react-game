@@ -5,24 +5,36 @@ import {generateData, getData} from "../../utils";
 import ModalFinished from "./ModalFinished";
 
 const GameScreen = () => {
+  const [regime, setRegime] = useState('classic')
+  const [amount, setAmount] = useState(10);
   const [current, setCurrent] = useState(null);
   const [previous, setPrevious] = useState(null);
-  const [cards, setCards] = useState([]);
-  const [score, setScore] = useState(0);
+  const [cards, setCards] = useState(JSON.parse(localStorage.getItem('cards')) || []);
+  const [score, setScore] = useState(Number(localStorage.getItem('score')) || 0);
   const [finished, setFinished] = useState(false);
-
+  console.log(localStorage.getItem('score'))
   useEffect(() => {
-    playAgain();
+    if (!Boolean(localStorage.getItem('active'))) playAgain();
   }, []);
-
+  useEffect( () => {
+    if (!Boolean(localStorage.getItem('active'))) playAgain();
+  }, [amount])
   useEffect(() => {
     checkIfCardsSame();
   }, [current, previous]);
+  localStorage.setItem('cards', JSON.stringify(cards));
 
+  const changeCardAmount = (amount) => {
+    setAmount(amount);
+  }
+  const changeRegime = (regime) => {
+    setRegime(regime);
+  }
   const playAgain = () => {
     setScore(0);
+    localStorage.setItem('score', '0');
     setFinished(false);
-    getData('/loadData')
+    getData(`/loadData?amount=${amount}`)
       .then(body => generateData(body))
       .then(data => setCards(data))
   }
@@ -76,6 +88,7 @@ const GameScreen = () => {
   const openCard = (clickedCard) => {
     if (!clickedCard.open) {
       setScore(score + 1);
+      localStorage.setItem('score', String(score+1));
       if (current) {
         setPrevious(current);
       }
@@ -98,15 +111,15 @@ const GameScreen = () => {
 
             { cards ? cards.map(el => <Card
                   {...el}
+                  regime={regime}
                   clickHandler={() => openCard(el)}
             />) : null }
 
           </div>
       </div>
       <div className="settings-area">
-        <Settings restartFunc={playAgain}/>
+        <Settings changeRegime={changeRegime} changeCards={changeCardAmount} restartFunc={playAgain}/>
       </div>
-
       { finished ? <ModalFinished playAgain={playAgain} score={score}/> : null}
     </>
   )
