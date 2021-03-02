@@ -1,5 +1,66 @@
-import React, {useEffect, useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import M from "materialize-css";
+import useSound from 'use-sound';
+import audioSrc from '../../../../src/audio/music.mp3';
+
+const ModalAudio = () => {
+  const modalRef = useRef(null);
+  const [soundsVolume, setSoundsVolume] = useState(50);
+  const [musicVolume, setMusicVolume] = useState(50);
+  useEffect( () => {
+    if (modalRef.current) {
+      M.Modal.init(modalRef.current);
+    }
+  }, [modalRef.current])
+  const changeMusicVolume = (e) => {
+    setMusicVolume(e.target.value)
+    //musicPlayer.volume = e.target.value / 100;
+  }
+  const changeSoundsVolume = (e) => {
+    setSoundsVolume(e.target.volume);
+
+  }
+
+  return (
+    <div ref={modalRef}
+         id="modal1"
+         className="modal bottom-sheet"
+    >
+      <div className="modal-content">
+        <h4>Настройка звука</h4>
+        <p>Музыка:</p>
+
+        <p className="range-field">
+          <input type="range"
+                 min="0"
+                 max="100"
+                 step="5"
+                 defaultValue={musicVolume}
+                 onChange={changeMusicVolume}
+          />
+        </p>
+        <p>Звуки:</p>
+
+        <p className="range-field">
+          <input type="range"
+                 min="0"
+                 max="100"
+                 step="5"
+                 defaultValue={soundsVolume}
+                 onChange={changeSoundsVolume}
+          />
+        </p>
+
+
+
+      </div>
+      <div className="modal-footer">
+        <button className="btn modal-close waves-effect waves-green btn-flat">Закрыть</button>
+      </div>
+    </div>
+  )
+}
+/*
 
 class ModalAudio extends React.Component {
   constructor() {
@@ -26,64 +87,11 @@ class ModalAudio extends React.Component {
   }
   render() {
     return (
-      <div ref={Modal => {
-        this.Modal = Modal;
-      }}
-           id="modal1" className="modal bottom-sheet">
-        <div className="modal-content">
-          <h4>Настройка звука</h4>
-          <p>Музыка:</p>
 
-            <p className="range-field">
-              <input type="range"
-                     min="0"
-                     max="100"
-                     step="5"
-                     defaultValue={this.state.musicVolume}
-                     onChange={this.changeMusicVolume}
-              />
-            </p>
-          <p>Звуки:</p>
-
-          <p className="range-field">
-            <input type="range"
-                   min="0"
-                   max="100"
-                   step="5"
-                   defaultValue={this.state.soundVolume}
-                   onChange={this.changeSoundVolume}
-            />
-          </p>
-
-
-
-        </div>
-        <div className="modal-footer">
-          <button className="btn modal-close waves-effect waves-green btn-flat">Закрыть</button>
-        </div>
-      </div>
     )
   }
 }
-/*
-const ModalAudio = () => {
-  const ModalWindow = useRef(null);
-  useEffect(() => {
-    M.Modal.init(ModalWindow);
-  })
-  return (
-    <div ref={ModalWindow}
-         id="modal1" className="modal bottom-sheet">
-      <div className="modal-content">
-        <h4>Modal Header</h4>
-        <p>A bunch of text</p>
-      </div>
-      <div className="modal-footer">
-        <a href="#" className="modal-close waves-effect waves-green btn-flat">Agree</a>
-      </div>
-    </div>
-  )
-}
+
 
 */
 

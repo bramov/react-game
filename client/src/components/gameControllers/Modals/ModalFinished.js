@@ -1,44 +1,56 @@
-import React from "react";
+import React, {useState, useEffect, useRef} from "react";
 import M from "materialize-css";
 
-class ModalFinished extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {name: ''};
-    this.updateRating = this.updateRating.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
-    this.restartGame = this.restartGame.bind(this);
 
-  }
-  componentDidMount() {
-    const options = {
-      inDuration: 250,
-      outDuration: 250,
-      opacity: 0.5,
-      dismissible: false,
-      startingTop: "4%",
-      endingTop: "10%"
-    };
-    M.Modal.init(this.Modal, options);
+const ModalFinished = ({playAgain, score, amount}) => {
+  const modalRef = useRef(null);
+  const [name, setName] = useState('');
+  const [updated, setUpdated] = useState(false);
+  const [disabledBtn, setDisabledBtn] = useState(false);
 
-    M.Modal.getInstance(this.Modal).open();
+  useEffect(() => {
+    if (modalRef.current) {
+      const options = {
+        inDuration: 250,
+        outDuration: 250,
+        opacity: 0.5,
+        dismissible: false,
+        startingTop: "4%",
+        endingTop: "10%"
+      };
 
-  }
-  restartGame() {
-    const instance = M.Modal.getInstance(this.Modal).close();
-    this.props.playAgain();
+      M.Modal.init(modalRef.current, options);
+      M.Modal.getInstance(modalRef.current).open();
 
-  }
-  handleInputChange(e) {
-    this.setState({ name: e.target.value });
-  }
-  updateRating(e) {
-    e.preventDefault();
-    const data = {
-      score: this.props.score,
-      name: this.state.name
     }
-    fetch('/updateData', {
+
+  }, [modalRef.current])
+
+
+  const restartGame = () =>  {
+    M.Modal.getInstance(modalRef.current).close();
+    playAgain();
+  }
+  const handleInputChange = e => {
+    setName(e.target.value);
+  }
+  const showUpdated = (res) =>{
+    if (res.message) {
+      setUpdated(true);
+      setTimeout(() => {
+        restartGame();
+      }, 1000);
+    }
+  }
+  const updateRating = async (e) => {
+    e.preventDefault();
+    setDisabledBtn(true);
+    const data = {
+      score: score,
+      name: name,
+      amount: amount,
+    }
+    const response = await fetch('/updateData', {
       method: 'POST',
       headers: {
         "Content-type": "application/json",
@@ -46,57 +58,50 @@ class ModalFinished extends React.Component {
       },
       body: JSON.stringify(data)
     })
-      .then(response => response.json())
-      .then(res => alert(res));
+    const res = await response.json();
+    showUpdated(res);
   }
-
-  render(props) {
-
-    return (
-        <div
-          ref={Modal => {
-            this.Modal = Modal;
-          }}
-          id="modal3"
-          className="modal"
-        >
-          {/* If you want Bottom Sheet Modal then add
-                        bottom-sheet class to the "modal" div
-                        If you want Fixed Footer Modal then add
-                        modal-fixed-footer to the "modal" div*/}
-          <div className="modal-content">
-            <h4>Игра завершена</h4>
-            <p>Ваш счет: {this.props.score} баллов</p>
-            <p>Введите ваше имя / логин, чтобы обновить информацию о себе в статистике.</p>
-            <form onSubmit={this.updateRating}>
-              <div className="input-field">
-                <input type="text"
-                       className="validate"
-                       id="name_field"
-                       onChange={this.handleInputChange}
-                       value={this.state.name}
-                />
-                <label htmlFor="name_field">Имя или логин</label>
-              </div>
-              <button className="btn waves-effect waves-light" type="submit" name="action">Подтвердить
-                <i className="material-icons right">send</i>
-              </button>
-              <button className="btn waves-effect waves-light right"
-                      type="submit"
-                      onClick={this.restartGame}>
-                Сыграть еще
-                <i className="material-icons right">autorenew</i>
-              </button>
-            </form>
+  return (
+    <div
+      ref={modalRef}
+      id="modal3"
+      className="modal"
+    >
+      <div className="modal-content">
+        <h4>Игра завершена</h4>
+        <p>Ваш счет: {score} баллов</p>
+        <p>Введите ваше имя / логин, чтобы обновить информацию о себе в статистике.</p>
+        <form onSubmit={updateRating}>
+          <div className="input-field">
+            <input type="text"
+                   className="validate"
+                   id="name_field"
+                   onChange={handleInputChange}
+                   value={name}
+            />
+            <label htmlFor="name_field">Имя или логин</label>
           </div>
-          <div className="modal-footer">
-            <a className="modal-close waves-effect waves-green btn-flat">
-              Закрыть
-            </a>
-          </div>
-        </div>
-    );
-  }
+          <button className="btn waves-effect waves-light" type="submit" name="action">
+            Подтвердить
+            <i className="material-icons right">send</i>
+          </button>
+          <button className="btn waves-effect waves-light right"
+                  type="submit"
+                  onClick={restartGame}
+                  disabled={disabledBtn}
+          >
+            Сыграть еще
+            <i className="material-icons right">autorenew</i>
+          </button>
+          {updated ? 'Обновлено!' : null}
+        </form>
+      </div>
+      <div className="modal-footer">
+        <a className="modal-close waves-effect waves-green btn-flat">
+          Закрыть
+        </a>
+      </div>
+    </div>
+  )
 }
-
 export default ModalFinished;
