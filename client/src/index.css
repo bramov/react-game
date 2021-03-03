@@ -32,10 +32,12 @@ code {
 .game-area {
   width: 100%;
   min-height: 500px;
-  border: 1px solid darkgray;
-  background-color: darkgray;
   margin-top: 2%;
 }
+.game-area:-webkit-full-screen {background-color: orange;}
+.game-area:-moz-full-screen {background-color: orange;}
+.game-area:fullscreen  {background-color: orange;}
+.game-area:fullscreen .card-placer {margin: 1%; max-width: 9%}
 .settings-area {
   width: 100%;
 }
@@ -100,9 +102,45 @@ code {
 
 .card-outer {
   transform: rotateY(180deg);
+  display: flex;
+  justify-content: flex-end;
+  background-color: azure;
+  border-radius: 7%;
 }
 
 .cards-wrapper > ul > li {
   display: inline-block;
   margin: 5%;
+}
+.height90 {
+  height: 90vh;
+}
+.loader {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-overlay {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  background-color: rgba(29, 37, 50, 0.3);
+}
+.modal-body {
+  display: flex !important;
+  bottom: 0 !important;
+  flex-direction: column;
+  top: 10%;
+}
+tr > td, tr > th {
+  width: 30% !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
