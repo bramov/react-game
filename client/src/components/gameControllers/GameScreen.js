@@ -30,6 +30,11 @@ const GameScreen = () => {
 
   const mounted = useRef(null);
   useEffect(() => {
+    if (cards.length === 0) {
+      playAgain();
+    }
+  })
+  useEffect(() => {
     checkIfCardsSame();
   }, [current, previous]);
 

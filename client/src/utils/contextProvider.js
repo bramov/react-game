@@ -6,7 +6,7 @@ const settingsObject = {
   musicValue: localStorage.getItem('musicValue') || '50',
   regime: localStorage.getItem('regime') || 'classic',
   amount: localStorage.getItem('amount') || '10',
-  cards: JSON.parse(localStorage.getItem('cards') || []),
+  cards: JSON.parse(localStorage.getItem('cards')) || [],
   score: localStorage.getItem('score') || '0',
   bestEasy: localStorage.getItem('bestEasy') || '',
   bestMiddle: localStorage.getItem('bestMiddle') || '',

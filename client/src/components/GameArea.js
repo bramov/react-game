@@ -7,7 +7,7 @@ import {useGlobalSettings} from "../utils/contextProvider";
 
 const GameArea = () => {
   const { musicValue, active, setActive } = useGlobalSettings();
-  const [playBackgroundMusic] = useSound(backgroundMusic, {volume: musicValue / 100});
+  const [playBackgroundMusic, {stop, isPlaying}] = useSound(backgroundMusic, {volume: musicValue / 100});
 
   const startGame = () => {
     setActive(true);
@@ -17,7 +17,7 @@ const GameArea = () => {
   const stringToBoolean = (value) => {
     return (value === 'true' || value === true);
   }
-  console.log(active)
+
   return (
     <main>
       <div className="container game">
