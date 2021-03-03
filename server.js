@@ -20,15 +20,19 @@ const start = async () => {
 start();
 app.use(express.static(path));
 
-const prepareDataSet = () => {
-  const codes = ['10C', '10H', 'AS', 'KC', 'QH'];
-  const res = codes.map(el => ({
+const prepareDataSet = (param) => {
+  const codes = [
+    '10C', '10D', '10H', '10S', 'AC',
+    'AD', 'AH', 'AS', 'JC', 'JD',
+    'JH', 'JS', 'KC', 'KD', 'KH',
+    'KS', 'QC', 'QD', 'QH', 'QS'
+  ].slice(0, param/2);
+  return codes.map(el => ({
     code: el,
     id: null,
     open: false,
     active: true
-  }))
-  return res;
+  }));
 }
 
 app.get('/', async (req, res) => {
@@ -41,8 +45,8 @@ app.get('/', async (req, res) => {
 app.post('/updateData', urlencodedParser, async (req, res) => {
   try {
     const rating = client.db().collection('rating');
-    await rating.insertOne({name: req.body.name, score: req.body.score});
-    res.status(201);
+    await rating.insertOne({name: req.body.name, score: req.body.score, amount: req.body.amount});
+    res.status(201).json({message: 'Успешно!'})
   } catch(e) {
     res.status(500).json({message: 'Ошибка MongoDB'})
   }
@@ -50,7 +54,14 @@ app.post('/updateData', urlencodedParser, async (req, res) => {
 app.get('/loadScore', async (req, res) => {
   try {
     const data = client.db().collection('rating');
-    const scores = await data.find({}).toArray();
+    const mode = req.query.mode;
+    let scores;
+    if (mode === 'all') {
+      scores = await data.find({}).toArray();
+    } else {
+      scores = await data.find({amount: mode}).toArray();
+    }
+
     res.json(scores);
   } catch(e) {
     res.status(500).json({ message: 'Ошибка MongoDB' })
@@ -58,7 +69,8 @@ app.get('/loadScore', async (req, res) => {
 })
 app.get('/loadData', async (req, res) => {
   try {
-    const data = prepareDataSet();
+    const param = req.query.amount;
+    const data = prepareDataSet(param);
     res.json(data)
   } catch(e) {
     res.status(500).json({ message: 'Ошибка сервера' })
