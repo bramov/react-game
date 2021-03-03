@@ -1,54 +1,66 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Settings from "./Settings";
 import Card from "./Card";
-import {generateData, getData} from "../../utils";
-import ModalFinished from "./ModalFinished";
+import {generateData, getData} from "../../utils/utils";
+import ModalFinished from "./Modals/ModalFinished";
+import victorySound from '../../../src/audio/victory.mp3';
+import flipSound from '../../../src/audio/flip.mp3';
+import sameSound from '../../../src/audio/sameCards.mp3';
+import backgroundMusic from '../../../src/audio/music.mp3';
+import useSound from "use-sound";
+import Modal from "./Modals/Modal";
+
+import {useGlobalSettings} from "../../utils/contextProvider";
 
 const GameScreen = () => {
-  const [regime, setRegime] = useState('classic')
-  const [amount, setAmount] = useState(10);
+  const { musicValue, soundValue, regime, amount } = useGlobalSettings();
+  const ref = useRef(null);
+
   const [current, setCurrent] = useState(null);
   const [previous, setPrevious] = useState(null);
   const [cards, setCards] = useState(JSON.parse(localStorage.getItem('cards')) || []);
   const [score, setScore] = useState(Number(localStorage.getItem('score')) || 0);
   const [finished, setFinished] = useState(false);
-  console.log(localStorage.getItem('score'))
-  useEffect(() => {
-    if (!Boolean(localStorage.getItem('active'))) playAgain();
-  }, []);
+
+  const [playFlipSound] = useSound(flipSound, {volume: soundValue / 100});
+  const [playSameCardsSound] = useSound(sameSound, {volume: soundValue / 100});
+  const [playVictorySound] = useSound(victorySound, {volume: soundValue / 100});
+  const [playBackgroundMusic] = useSound(backgroundMusic, {volume: musicValue / 100});
+
+
   useEffect( () => {
-    if (!Boolean(localStorage.getItem('active'))) playAgain();
-  }, [amount])
+    playAgain();
+  }, [amount, regime]);
   useEffect(() => {
     checkIfCardsSame();
   }, [current, previous]);
-  localStorage.setItem('cards', JSON.stringify(cards));
 
-  const changeCardAmount = (amount) => {
-    setAmount(amount);
+
+  const openFullScreen = (el) => {
+    el.current.requestFullscreen();
   }
-  const changeRegime = (regime) => {
-    setRegime(regime);
-  }
+
   const playAgain = () => {
     setScore(0);
-    localStorage.setItem('score', '0');
     setFinished(false);
     getData(`/loadData?amount=${amount}`)
       .then(body => generateData(body))
       .then(data => setCards(data))
   }
-
-  const checkIfGameEnded = () => {
+  const toggleFinished = () => {
+    setFinished(false);
+    playAgain();
+  }
+  const checkIfGameEnded = useCallback(() => {
     const allCardsOpen = cards.every(el => el.open);
     if (allCardsOpen) {
+      playVictorySound();
       setFinished(true);
     }
-  }
+  }, [cards]);
 
-  const checkIfCardsSame = () => {
-
-    if (current && previous) {
+  const checkIfCardsSame = useCallback(() => {
+    if (current && previous && (current.id !== previous.id) ) {
       if (current.code === previous.code) {
         setCurrent(null);
         setPrevious(null);
@@ -58,35 +70,35 @@ const GameScreen = () => {
             ({...card, active: false}) : card
           )
         setCards(updatedCards);
+        playSameCardsSound();
         checkIfGameEnded();
-        /*
-        setTimeout(() => {
 
-        }, 500);*/
       } else {
         closeTwoCards();
       }
     }
+  }, [current, previous]);
 
-  }
-  const closeTwoCards = () => {
+  const closeTwoCards = useCallback(() => {
     if (current && previous) {
       const updatedCards = cards
         .map(card =>
-          card.open === true && card.active === true ?
-          ({...card, open: false, active: true}) : card
+            card.open === true && card.active === true ?
+              ({...card, open: false, active: true}) : card
         );
 
       setCurrent(null);
       setPrevious(null);
-      setTimeout( () => {
-        setCards(updatedCards);
-      }, 500)
+        setTimeout( () => {
+          setCards(updatedCards);
+        }, 500)
 
     }
-  }
-  const openCard = (clickedCard) => {
+  }, [current])
+
+  const openCard = useCallback((clickedCard) => {
     if (!clickedCard.open) {
+      playFlipSound();
       setScore(score + 1);
       localStorage.setItem('score', String(score+1));
       if (current) {
@@ -101,26 +113,40 @@ const GameScreen = () => {
         )
       setCards(updatedCards);
     }
-  }
+  }, [cards, playFlipSound])
 
   return (
     <>
-      <div className="game-area container">
-        <h3 className="teal-text center">Clicks: <strong className="black-text">{score}</strong></h3>
+      <div ref={ref} className="game-area">
+        <h3 className="teal-text center">Счет: <strong className="black-text">{score}</strong></h3>
           <div className="row cards-wrapper">
 
             { cards ? cards.map(el => <Card
                   {...el}
                   regime={regime}
+                  key={el.id}
                   clickHandler={() => openCard(el)}
             />) : null }
 
           </div>
       </div>
       <div className="settings-area">
-        <Settings changeRegime={changeRegime} changeCards={changeCardAmount} restartFunc={playAgain}/>
+        <Settings openFullScreen={() => openFullScreen(ref)}
+                  restartFunc={playAgain}
+                  amount={amount}
+                  regime={regime}
+                  score={score}
+
+        />
       </div>
-      { finished ? <ModalFinished playAgain={playAgain} score={score}/> : null}
+      {
+        finished ?
+        <Modal onClose={toggleFinished}>
+          <ModalFinished playAgain={playAgain}
+                         amount={amount}
+                         score={score}/></Modal> :
+        null
+      }
     </>
   )
 }
