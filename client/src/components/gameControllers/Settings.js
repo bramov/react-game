@@ -3,9 +3,11 @@ import ModalAudio from "./Modals/ModalAudio";
 import ModalSettings from "./Modals/ModalSettings";
 import ModalRating from "./Modals/ModalRating";
 import Modal from "./Modals/Modal";
+import {useGlobalSettings} from "../../utils/contextProvider";
 
 
 const Settings = ({ restartFunc, score, openFullScreen}) => {
+  const { setCards } = useGlobalSettings();
   const [isMusicSettingsOpen, setMusicSettingsOpen] = useState(false);
   const [isGameSettingsOpen, setGameSettingsOpen] = useState(false);
   const [isRatingSettingsOpen, setRatingSettingsOpen] = useState(false);
@@ -23,6 +25,11 @@ const Settings = ({ restartFunc, score, openFullScreen}) => {
   }
   const toggleRatingSettings = () => {
     setRatingSettingsOpen(p => !p);
+  }
+
+  const handlePlayAgain = () => {
+    setCards(null);
+    restartFunc();
   }
 
 
@@ -48,7 +55,7 @@ const Settings = ({ restartFunc, score, openFullScreen}) => {
         <ul className="right settings-left">
           <li>
             <button className="btn btn-icon"
-                    onClick={restartFunc}>
+                    onClick={handlePlayAgain}>
               <i className="material-icons">autorenew</i>Заново
             </button>
           </li>

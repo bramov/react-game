@@ -1,9 +1,11 @@
 import React, {useState, useEffect, useRef} from "react";
 import M from "materialize-css";
+import {useGlobalSettings} from "../../../utils/contextProvider";
 
 
 
 const ModalFinished = ({playAgain, score, amount}) => {
+  const { setCards } = useGlobalSettings();
   const [name, setName] = useState('');
   const [updated, setUpdated] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(false);
@@ -22,6 +24,7 @@ const ModalFinished = ({playAgain, score, amount}) => {
   }
 
   const restartGame = () => {
+    setCards(null);
     playAgain();
   }
 

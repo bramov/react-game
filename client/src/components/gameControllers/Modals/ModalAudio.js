@@ -5,6 +5,14 @@ const ModalAudio = () => {
 
   const { musicValue, setMusicValue, soundValue, setSoundValue } = useGlobalSettings();
 
+  const changeMusicVolume = (e) => {
+    setMusicValue(e.target.value);
+    localStorage.setItem('musicValue', e.target.value)
+  }
+  const changeSoundVolume = (e) => {
+    setSoundValue(e.target.value);
+    localStorage.setItem('soundValue', e.target.value);
+  }
   return (
     <>
         <h4>Настройки музыки и звуков</h4>
@@ -15,7 +23,7 @@ const ModalAudio = () => {
                  max="100"
                  step="5"
                  value={musicValue}
-                 onChange={(e) => setMusicValue(e.target.value)}
+                 onChange={changeMusicVolume}
 
           />
         </p>
@@ -26,7 +34,7 @@ const ModalAudio = () => {
                  max="100"
                  step="5"
                  value={soundValue}
-                 onChange={(e) => setSoundValue(e.target.value)}
+                 onChange={changeSoundVolume}
           />
         </p>
     </>

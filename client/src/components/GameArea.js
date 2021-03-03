@@ -6,8 +6,7 @@ import backgroundMusic from "../audio/music.mp3";
 import {useGlobalSettings} from "../utils/contextProvider";
 
 const GameArea = () => {
-  const { musicValue } = useGlobalSettings();
-  const [isActive, setActive] = useState(false);
+  const { musicValue, active, setActive } = useGlobalSettings();
   const [playBackgroundMusic] = useSound(backgroundMusic, {volume: musicValue / 100});
 
   const startGame = () => {
@@ -17,7 +16,7 @@ const GameArea = () => {
   return (
     <main>
       <div className="container game">
-        { isActive ? <GameScreen/> : <ActionButton start={startGame}/>}
+        { active ? <GameScreen/> : <ActionButton start={startGame}/>}
       </div>
 
     </main>

@@ -13,12 +13,11 @@ import Modal from "./Modals/Modal";
 import {useGlobalSettings} from "../../utils/contextProvider";
 
 const GameScreen = () => {
-  const { musicValue, soundValue, regime, amount } = useGlobalSettings();
+  const { musicValue, soundValue, regime, amount, cards, setCards } = useGlobalSettings();
   const ref = useRef(null);
 
   const [current, setCurrent] = useState(null);
   const [previous, setPrevious] = useState(null);
-  const [cards, setCards] = useState(JSON.parse(localStorage.getItem('cards')) || []);
   const [score, setScore] = useState(Number(localStorage.getItem('score')) || 0);
   const [finished, setFinished] = useState(false);
 
@@ -72,6 +71,7 @@ const GameScreen = () => {
         setCards(updatedCards);
         playSameCardsSound();
         checkIfGameEnded();
+        localStorage.setItem('cards', JSON.stringify(cards));
 
       } else {
         closeTwoCards();
