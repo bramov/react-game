@@ -6,7 +6,12 @@ const settingsObject = {
   musicValue: localStorage.getItem('musicValue') || '50',
   regime: localStorage.getItem('regime') || 'classic',
   amount: localStorage.getItem('amount') || '10',
-  cards: JSON.parse(localStorage.getItem('cards' || null))
+  cards: JSON.parse(localStorage.getItem('cards' || null)),
+  score: localStorage.getItem('score') || '0',
+  bestEasy: localStorage.getItem('bestEasy') || '',
+  bestMiddle: localStorage.getItem('bestMiddle') || '',
+  bestHard: localStorage.getItem('bestHard') || '',
+  totalGames: localStorage.getItem('totalGames') || '0'
 }
 const Settings = React.createContext({
   active: settingsObject.active,
@@ -14,7 +19,12 @@ const Settings = React.createContext({
   musicValue: settingsObject.musicValue,
   regime: settingsObject.regime,
   amount: settingsObject.amount,
-  cards: settingsObject.cards
+  cards: settingsObject.cards,
+  score: settingsObject.score,
+  bestEasy: settingsObject.bestEasy,
+  bestMiddle: settingsObject.bestMiddle,
+  bestHard: settingsObject.bestHard,
+  totalGames: settingsObject.totalGames
 });
 
 
@@ -25,11 +35,16 @@ export default function SettingsProvider({children}) {
   const [amount, setAmount] = useState(settingsObject.amount);
   const [active, setActive] = useState(settingsObject.active);
   const [cards, setCards] = useState(settingsObject.cards);
+  const [bestEasy, setBestEasy] = useState(settingsObject.bestEasy);
+  const [bestMiddle, setBestMiddle] = useState(settingsObject.bestMiddle);
+  const [bestHard, setBestHard] = useState(settingsObject.bestHard);
+  const [totalGames, setTotalGames] = useState(settingsObject.totalGames);
 
   const value = {
     soundValue, setSoundValue, musicValue, setMusicValue,
     regime, setRegime, amount, setAmount, active, setActive,
-    cards, setCards
+    cards, setCards, totalGames, setTotalGames, bestEasy,
+    setBestEasy, bestMiddle, setBestMiddle, bestHard, setBestHard
   }
   return <Settings.Provider value={value}>{children}</Settings.Provider>
 }

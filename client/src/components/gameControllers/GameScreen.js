@@ -13,7 +13,10 @@ import Modal from "./Modals/Modal";
 import {useGlobalSettings} from "../../utils/contextProvider";
 
 const GameScreen = () => {
-  const { musicValue, soundValue, regime, amount, cards, setCards } = useGlobalSettings();
+  const { musicValue, soundValue, regime, totalGames,
+          amount, cards, setCards, setTotalGames,
+          setBestEasy, setBestMiddle, setBestHard,
+          bestEasy, bestMiddle, bestHard} = useGlobalSettings();
   const ref = useRef(null);
 
   const [current, setCurrent] = useState(null);
@@ -50,11 +53,47 @@ const GameScreen = () => {
     setFinished(false);
     playAgain();
   }
+  const shouldUpdateCount = (target, mode) => {
+
+    switch (mode) {
+      case '10':
+        if (!bestEasy) {
+          setBestEasy(target);
+          localStorage.setItem('bestEasy', target);
+        } else if (target < Number(bestEasy)) {
+          setBestEasy(target)
+          localStorage.setItem('bestEasy', target);
+        }
+        break;
+      case '20':
+        if (!bestMiddle) {
+          setBestMiddle(target);
+          localStorage.setItem('bestMiddle', target);
+        } else if (target < Number(bestMiddle)) {
+          setBestMiddle(target)
+          localStorage.setItem('bestMiddle', target);
+        }
+        break;
+      case '30':
+        if (!bestHard) {
+          setBestHard(target);
+          localStorage.setItem('bestHard', target);
+        } else if (target < Number(bestHard)) {
+          setBestHard(target)
+          localStorage.setItem('bestHard', target);
+        }
+        break;
+      default: break;
+    }
+  }
   const checkIfGameEnded = useCallback(() => {
     const allCardsOpen = cards.every(el => el.open);
     if (allCardsOpen) {
       playVictorySound();
       setFinished(true);
+      shouldUpdateCount(score, amount);
+      localStorage.setItem('totalGames', String(Number(totalGames) + 1));
+      setTotalGames(Number(totalGames) + 1);
     }
   }, [cards]);
 

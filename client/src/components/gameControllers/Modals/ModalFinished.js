@@ -5,7 +5,7 @@ import {useGlobalSettings} from "../../../utils/contextProvider";
 
 
 const ModalFinished = ({playAgain, score, amount}) => {
-  const { setCards } = useGlobalSettings();
+  const { setCards, totalGames, bestEasy, bestHard, bestMiddle } = useGlobalSettings();
   const [name, setName] = useState('');
   const [updated, setUpdated] = useState(false);
   const [disabledBtn, setDisabledBtn] = useState(false);
@@ -51,7 +51,13 @@ const ModalFinished = ({playAgain, score, amount}) => {
   return (
     <>
       <h4>Игра завершена</h4>
-      <p>Ваш счет: {score} баллов</p>
+      <p>Ваш счет: <strong>{score}</strong> баллов</p>
+      <div>
+        <p>Всего игр сыграно: <strong>{totalGames}</strong></p>
+        <p>Лучший счет в легкой игре: <strong>{bestEasy ? bestEasy : 'не было игр'}</strong></p>
+        <p>Лучший счет в средней игре: <strong>{bestMiddle ? bestMiddle : 'не было игр'}</strong></p>
+        <p>Лучший счет в сложной игре: <strong>{bestHard ? bestHard : 'не было игр'}</strong></p>
+      </div>
       <p>Введите ваше имя / логин, чтобы обновить информацию о себе в статистике.</p>
       <form onSubmit={updateRating}>
         <div className="input-field">
