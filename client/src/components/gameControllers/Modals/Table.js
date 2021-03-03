@@ -31,7 +31,7 @@ const Table = () => {
   }
 
   return (
-    <table className="left responsive-table">
+    <table className="left">
       <thead>
       <tr>
         <th>Имя</th>
