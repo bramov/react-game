@@ -24,7 +24,7 @@ const ModalFinished = ({playAgain, score, amount}) => {
   }
 
   const restartGame = () => {
-    setCards(null);
+    setCards([]);
     playAgain();
   }
 

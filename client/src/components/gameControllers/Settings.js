@@ -6,7 +6,7 @@ import Modal from "./Modals/Modal";
 import {useGlobalSettings} from "../../utils/contextProvider";
 
 
-const Settings = ({ restartFunc, score, openFullScreen}) => {
+const Settings = ({ playAgain, score, openFullScreen}) => {
   const { setCards } = useGlobalSettings();
   const [isMusicSettingsOpen, setMusicSettingsOpen] = useState(false);
   const [isGameSettingsOpen, setGameSettingsOpen] = useState(false);
@@ -28,8 +28,8 @@ const Settings = ({ restartFunc, score, openFullScreen}) => {
   }
 
   const handlePlayAgain = () => {
-    setCards(null);
-    restartFunc();
+    setCards([]);
+    playAgain();
   }
 
 
@@ -55,7 +55,7 @@ const Settings = ({ restartFunc, score, openFullScreen}) => {
         <ul className="right settings-left">
           <li>
             <button className="btn btn-icon"
-                    onClick={handlePlayAgain}>
+                    onClick={playAgain}>
               <i className="material-icons">autorenew</i>Заново
             </button>
           </li>
@@ -69,7 +69,7 @@ const Settings = ({ restartFunc, score, openFullScreen}) => {
 
       </div>
       { isMusicSettingsOpen ? <Modal onClose={toggleMusicSettings} bottom={true}><ModalAudio/></Modal> : null }
-      { isGameSettingsOpen ? <Modal onClose={toggleGameSettings}> <ModalSettings/> </Modal> : null }
+      { isGameSettingsOpen ? <Modal onClose={toggleGameSettings}> <ModalSettings playAgain={playAgain}/> </Modal> : null }
       { isRatingSettingsOpen ? <Modal onClose={toggleRatingSettings}> <ModalRating score={score}/> </Modal> : null }
     </>
   )

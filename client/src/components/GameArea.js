@@ -11,12 +11,17 @@ const GameArea = () => {
 
   const startGame = () => {
     setActive(true);
+    localStorage.setItem('active', 'true');
     playBackgroundMusic();
   }
+  const stringToBoolean = (value) => {
+    return (value === 'true' || value === true);
+  }
+  console.log(active)
   return (
     <main>
       <div className="container game">
-        { active ? <GameScreen/> : <ActionButton start={startGame}/>}
+        { stringToBoolean(active) ? <GameScreen/> : <ActionButton start={startGame}/>}
       </div>
 
     </main>

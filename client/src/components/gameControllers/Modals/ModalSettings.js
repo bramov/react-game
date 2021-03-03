@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {useGlobalSettings} from "../../../utils/contextProvider";
 import M from "materialize-css";
 
-const ModalSettings = () => {
+const ModalSettings = ({playAgain}) => {
   const { regime, setRegime, amount, setAmount, setCards } = useGlobalSettings();
   useEffect(() => {
     M.AutoInit();
@@ -15,12 +15,13 @@ const ModalSettings = () => {
   const changeRegimeValue = (e) => {
     setRegime(e.target.value);
     localStorage.setItem('regime', e.target.value);
-    setCards(null);
+    setCards([]);
+
   }
   const changeAmountValue = (e) => {
     setAmount(e.target.value);
     localStorage.setItem('amount', e.target.value);
-    setCards(null);
+    setCards([]);
   }
   return (
     <>

@@ -28,13 +28,18 @@ const GameScreen = () => {
   const [playSameCardsSound] = useSound(sameSound, {volume: soundValue / 100});
   const [playVictorySound] = useSound(victorySound, {volume: soundValue / 100});
 
-  useEffect( () => {
-    playAgain();
-  }, [amount, regime]);
+  const mounted = useRef(null);
   useEffect(() => {
     checkIfCardsSame();
   }, [current, previous]);
 
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+    } else {
+      playAgain();
+    }
+  }, [amount, regime]);
 
   const openFullScreen = (el) => {
     el.current.requestFullscreen();
@@ -45,7 +50,10 @@ const GameScreen = () => {
     setFinished(false);
     getData(`/loadData?amount=${amount}`)
       .then(body => generateData(body))
-      .then(data => setCards(data))
+      .then(data => {
+        setCards(data)
+        localStorage.setItem('cards', JSON.stringify(data));
+      })
   }
   const toggleFinished = () => {
     setFinished(false);
@@ -103,12 +111,12 @@ const GameScreen = () => {
         const updatedCards = cards
           .map(card => card.id === previous.id ||
             card.id === current.id ?
-            ({...card, active: false, won: true, selected: false}) : card
+            ({...card, active: false, won: true}) : card
           )
         setCards(updatedCards);
         playSameCardsSound();
         checkIfGameEnded();
-        localStorage.setItem('cards', JSON.stringify(cards));
+        localStorage.setItem('cards', JSON.stringify(updatedCards));
 
       } else {
         closeTwoCards();
@@ -171,7 +179,7 @@ const GameScreen = () => {
       </div>
       <div className="settings-area">
         <Settings openFullScreen={() => openFullScreen(ref)}
-                  restartFunc={playAgain}
+                  playAgain={playAgain}
                   amount={amount}
                   regime={regime}
                   score={score}
