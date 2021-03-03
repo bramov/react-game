@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const Card = ({ code, clickHandler, open }) => {
-  const path = `/assets/images/classic/${code}.png`;
-  const pathBack = '/assets/images/purple_back.png';
+const Card = ({ code, clickHandler, open, regime }) => {
+  const path = `/assets/images/${regime}/${code}.png`;
+  const pathBack = `/assets/images/${regime}_back.png`;
 
   return (
       <div className="card-placer"
