@@ -26,12 +26,13 @@ const prepareDataSet = (param) => {
     'AD', 'AH', 'AS', 'JC', 'JD',
     'JH', 'JS', 'KC', 'KD', 'KH',
     'KS', 'QC', 'QD', 'QH', 'QS'
-  ].slice(0, param/2);
+  ].sort(() => Math.random() - 0.5).slice(0, param/2);
   return codes.map(el => ({
     code: el,
     id: null,
     open: false,
-    active: true
+    active: true,
+    won: false
   }));
 }
 

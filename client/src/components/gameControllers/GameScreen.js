@@ -18,7 +18,7 @@ const GameScreen = () => {
           setBestEasy, setBestMiddle, setBestHard,
           bestEasy, bestMiddle, bestHard} = useGlobalSettings();
   const ref = useRef(null);
-
+  const [selectedCard, setSelectedCard] = useState(null);
   const [current, setCurrent] = useState(null);
   const [previous, setPrevious] = useState(null);
   const [score, setScore] = useState(Number(localStorage.getItem('score')) || 0);
@@ -27,8 +27,6 @@ const GameScreen = () => {
   const [playFlipSound] = useSound(flipSound, {volume: soundValue / 100});
   const [playSameCardsSound] = useSound(sameSound, {volume: soundValue / 100});
   const [playVictorySound] = useSound(victorySound, {volume: soundValue / 100});
-  const [playBackgroundMusic] = useSound(backgroundMusic, {volume: musicValue / 100});
-
 
   useEffect( () => {
     playAgain();
@@ -105,7 +103,7 @@ const GameScreen = () => {
         const updatedCards = cards
           .map(card => card.id === previous.id ||
             card.id === current.id ?
-            ({...card, active: false}) : card
+            ({...card, active: false, won: true, selected: false}) : card
           )
         setCards(updatedCards);
         playSameCardsSound();
@@ -162,8 +160,10 @@ const GameScreen = () => {
 
             { cards ? cards.map(el => <Card
                   {...el}
+                  tabindex={el.id}
                   regime={regime}
                   key={el.id}
+                  selected={selectedCard}
                   clickHandler={() => openCard(el)}
             />) : null }
 
